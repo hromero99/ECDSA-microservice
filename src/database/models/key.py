@@ -1,6 +1,6 @@
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, LargeBinary
 from sqlalchemy.orm import relationship
-from database import Base
+from src.database import Base
 
 
 class KeyModel(Base):

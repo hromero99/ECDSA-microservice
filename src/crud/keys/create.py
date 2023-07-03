@@ -1,5 +1,5 @@
-from entities.key import DeviceKey
-from database.models import KeyModel
+from src.entities import DeviceKey
+from src.database.models import KeyModel
 
 
 def create_key(db, key_model=DeviceKey):
@@ -10,5 +10,5 @@ def create_key(db, key_model=DeviceKey):
     )
     db.add(db_key)
     db.commit()
-    db.refresg(db_key)
+    db.refresh(db_key)
     return db_key
