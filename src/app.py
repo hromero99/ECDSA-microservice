@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, HTTPException
 from ecdsa.keys import SigningKey
 from .database import SessionLocal, engine
 from .database.database import Base
@@ -46,5 +46,5 @@ async def query_ecdsa_key(device_id: str, type: str, db: Session = Depends(get_d
     if type not in ["public", "private"]:
         return {"error": "Invalid key type requested"}
     if readed_key is None:
-        return {"error": "Device not found"}
+        raise HTTPException(status_code=404, detail="Device not found")
     return {"data": readed_key}
