@@ -1,11 +1,11 @@
 from fastapi import FastAPI, Depends, HTTPException
-from ecdsa.keys import SigningKey
 from .database import SessionLocal, engine
 from .database.database import Base
 from sqlalchemy.orm import Session
 from .crud.keys.create import create_key
 from .crud.keys.read_key import read_key, read_public_key, read_private_key
 from .entities.key import DeviceKey
+from ecdsa import SigningKey
 
 app = FastAPI()
 
@@ -27,12 +27,13 @@ async def generate_ecdsa_pair(device_id: str, db: Session = Depends(get_db)):
     readed_key = read_key(db, device_id=device_id)
     if readed_key is not None:
         return {"error": "Device already registered"}
-    priv_key = SigningKey.generate()  # NIST P-192
-    pub_key = priv_key.verifying_key
+    generate = SigningKey.generate()  # NIST P-192
+    priv_key = generate.to_string().hex()
+    pub_key = generate.verifying_key.to_string().hex()
     return create_key(
         db=db,
         key_model=DeviceKey(
-            device_id=device_id, priv_key=priv_key.to_pem(), pub_key=pub_key.to_pem()
+            device_id=device_id, priv_key=priv_key, pub_key=pub_key
         ),
     )
 
